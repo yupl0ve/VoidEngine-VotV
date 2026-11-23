@@ -43,6 +43,15 @@ Players searching for Voices of the Void optimization often run into outdated gu
 
 ---
 
+## Future Roadmap: Beyond Voices of the Void
+
+**VoidEngine** is built on a modular, low-level **Rust + UE4SS** runtime architecture rather than hardcoded game-specific hacks. Because Unreal Engine 4 shares a unified `UObject` / `ProcessEvent` / `ReceiveTick` foundation across titles, our core spatial culling and multithreaded offloading engine is highly portable.
+
+* **Short-Term Focus:** Polishing **VoidEngine** for *Voices of the Void* (`v1.1` Weather & Dish Optimizer, new hardware presets, and 100% compatibility with upcoming game updates).
+* **Long-Term Vision:** Depending on community feedback and support, we plan to port the **VoidEngine Rust Core** to other CPU-heavy indie titles and co-op games built on Unreal Engine 4 that suffer from single-threaded `GameThread` bottlenecks.
+
+---
+
 ## Security, Privacy & Antivirus Transparency
 
 Because VoidEngine is a compiled native C-ABI Rust library (`votv_network_boost.dll`) loaded via `UE4SS / shimloader` with offline cryptographic license verification (`Ed25519`), we maintain full transparency regarding binary safety:
@@ -69,6 +78,15 @@ VoidEngine is available with **Lifetime Access** (one-time purchase, all future 
 **VoidEngine** - низкоуровневый нативный оптимизатор процессора на языке **Rust** для игры **Voices of the Void** (поддерживает версии `0.9+ / 0.10+` и мультиплеерный кооп-мод **Multivoid**).
 
 Мод увеличивает частоту кадров на **+70%...150% честных нативных FPS** без генерации кадров, мыла и задержки ввода за счёт разгрузки однопоточного `GameThread` движка Unreal Engine 4.
+
+---
+
+### Планы на будущее: универсальное Rust-ядро для UE4
+
+**VoidEngine** построен на модульной архитектуре (**Rust + UE4SS**), а не на жёстких костылях под одну игру. Поскольку движок Unreal Engine 4 использует единую систему объектов и событий (`UObject` / `ProcessEvent` / `ReceiveTick`), наше многопоточное ядро легко адаптируется под другие проекты.
+
+* **Ближайшая цель:** развитие **VoidEngine** для *Voices of the Void* (крупный патч `v1.1` с оптимизацией погоды и тарелок, а также оперативная поддержка всех будущих обновлений игры).
+* **Амбициозная цель:** в зависимости от отклика и поддержки комьюнити - портирование ядра **VoidEngine** на другие требовательные к процессору инди- и кооп-игры на Unreal Engine 4.
 
 ### Ключевые возможности (v1.02):
 * **Умная фильтрация тиков (`ProcessEvent`):** усыпляет фоновые расчёты сотен пропов и мусора за стенами, сохраняя 100% ванильную работу радара, пульта скачивания сигналов, катушек записи, серверов, трансформаторов, Керфуса и всех сюжетных событий.
