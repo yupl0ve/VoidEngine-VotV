@@ -30,6 +30,19 @@ VoidEngine solves this directly in memory without modifying game `.pak` files or
 
 ---
 
+## Why Not Free Thunderstore Mods or `Engine.ini` Tweaks?
+
+Players searching for Voices of the Void optimization often run into outdated guides or older Thunderstore packages. Here is how they compare to **VoidEngine** on modern versions (`0.9+ / 0.10+`):
+
+| Alternative Solution | Works on `0.9+ / 0.10+`? | Why It Doesn't Fix Late-Game Base Lag |
+| :--- | :---: | :--- |
+| **`FoliageTweaks` / `QuickLoadMod`** | ❌ Outdated (`0.7 / 0.8`) | Built for legacy VoidMod versions. Only adjusted grass LODs or cached textures on disk - zero impact on the single-threaded `GameThread` actor tick bottleneck. |
+| **`CleanBase` / Garbage Removers** | ⚠️ Destructive | Permanently deletes world clutter instead of optimizing it. Once you decorate your base on Day 20-40+ with hundreds of drives, plushies, lights, and items, severe CPU lag returns in full. |
+| **`Engine.ini` / Lossless Scaling** | ⚠️ Visual / Input Penalty | Config files cannot stop UE4 Blueprints from firing `ReceiveTick`, while external Frame Generation (`LSFG`) smears dark UI elements and adds heavy mouse input latency at low base framerates. |
+| **VoidEngine (Native Rust)** | ✅ **`0.9+ / 0.10+` & Multivoid** | **Non-destructive runtime CPU optimization.** Keeps 100% of your items, physics, and story events intact while doubling real native FPS with zero input lag. |
+
+---
+
 ## Security, Privacy & Antivirus Transparency
 
 Because VoidEngine is a compiled native C-ABI Rust library (`votv_network_boost.dll`) loaded via `UE4SS / shimloader` with offline cryptographic license verification (`Ed25519`), we maintain full transparency regarding binary safety:
@@ -68,6 +81,14 @@ VoidEngine is available with **Lifetime Access** (one-time purchase, all future 
 * **Зарубежные карты:** [Hipolink](https://hipolink.net/yupl0ve_meow)
 * **YouTube-канал с тестами:** [YouTube.com](https://www.youtube.com/@yupl0ve_meow)
 * **Discord-сервер поддержки и отзывов:** [Присоединиться к Discord-серверу](https://discord.gg/ssCxswc3jn)
+
+---
+
+### Почему старые моды с Thunderstore и `Engine.ini` не спасают?
+
+* **`FoliageTweaks` и `QuickLoadMod`:** заброшены более полутора лет назад (под старые патчи `0.7 / 0.8`) и несовместимы с актуальными версиями `0.9+ / 0.10`. Они лишь резали прорисовку травы или кэшировали текстуры, никак не разгружая основной поток процессора (`GameThread`).
+* **`CleanBase` / удаление мусора:** вместо оптимизации движка физически удаляют объекты с карты. Как только к 20-30 дню вы сами обставите базу своими дисками, декором, едой и светом - просадки FPS вернутся в полном объёме. **VoidEngine** поднимает FPS в 2 раза, сохраняя каждый ваш предмет на месте.
+* **Генераторы кадров (`Lossless Scaling`):** рисуют фейковые промежуточные кадры с артефактами в темноте и ощутимой задержкой мыши, тогда как **VoidEngine** даёт честный нативный отклик.
 
 ---
 Created & maintained by **Inky** (`@yupl0ve_meow`)
