@@ -27,6 +27,8 @@ VoidEngine solves this directly in memory without modifying game `.pak` files or
 | **Core i3-9100F + GTX 1650 (4C/4T)** | Base Interior | 50–60 FPS | **140–155 FPS** |
 | **Core i7-4790 (DDR3) + GTX 1060 6GB** | Multivoid Co-op | 45–60 FPS | **100–115 FPS** |
 | **Xeon E5-2640 v4 + RX 480 (Linux Proton)** | Base Interior | 30–40 FPS | **70 FPS (Locked)** |
+| **Legacy 2-Core PC (2011)** | Intel Core i3-2120 (DDR3) + GTX 960 | ~30–40 FPS | **60–70 FPS (Base) / 80–90 (Forest)**
+
 
 ---
 
