@@ -45,6 +45,18 @@ Players searching for Voices of the Void optimization often run into outdated gu
 
 ---
 
+## Why is VoidEngine a Commercial Project? (Free Mods vs. VoidEngine)
+
+Most free community mods are built on enthusiasm using high-level Blueprints or Lua scripts - they add fun features or delete props, which is great, but they rarely touch deep engine bottlenecks and often break between game patches.
+
+**VoidEngine** is a standalone low-level engineering tool written in **Rust**, operating directly inside Unreal Engine 4 memory (`UObject` / `ReceiveTick` / `ProcessEvent` hooks). A small symbolic price guarantees what free hobby scripts usually cannot:
+
+* **Surgical Stability & Zero Broken Saves:** Every single game mechanic - from radar screens, CCTV cameras, and explosive physics to rare story events and Multivoid co-op - is manually reverse-engineered, whitelisted, and stress-tested so nothing corrupts your 40-hour save.
+* **Fast Day-1 Patch Maintenance:** Whenever *Voices of the Void* updates (`0.9` -> `0.10` and beyond), memory layouts and Blueprint classes shift. Paid support funds immediate upkeep and hotfixes (`v1.01`, `v1.02`, upcoming `v1.1`).
+* **Direct 1-on-1 Tech Support:** If you run into a quirk on an ancient 2-core CPU, integrated Vega graphics, or a heavy co-op lobby, you get direct developer support and fixes instead of waiting months on an abandoned forum thread.
+
+---
+
 ## Future Roadmap: Beyond Voices of the Void
 
 **VoidEngine** is built on a modular, low-level **Rust + UE4SS** runtime architecture rather than hardcoded game-specific hacks. Because Unreal Engine 4 shares a unified `UObject` / `ProcessEvent` / `ReceiveTick` foundation across titles, our core spatial culling and multithreaded offloading engine is highly portable.
@@ -95,6 +107,20 @@ VoidEngine is available with **Lifetime Access** (one-time purchase, all future 
 * **Встроенный оверлей на клавишу `[DELETE]`:** заморозка ИИ тараканов и живых манекенов в 1 клик, 4 мгновенных пресета графики (`[Numpad 1–4]`) и чёткий темпоральный апскейлер **TAAU** (`[Numpad 5–7]`).
 * **Полная безопасность:** работает строго офлайн в оперативной памяти, не трогает сохранения и проверен на [**VirusTotal**](https://www.virustotal.com/gui/file/5c8e08a17fb881a14b5eadd719f6886c8a4ff528e900f6da89e5dff629c9f4bc?nocache=1).
 * **Поддержка Windows 10/11 и Linux (Steam Proton / Wine).**
+
+---
+
+### Почему VoidEngine платный и чем отличается от бесплатных модов?
+
+Бесплатные фанатские моды обычно пишутся на чистом энтузиазме через высокоуровневые скрипты (Lua / Blueprints) - они отлично добавляют контент или просто удаляют мусор с карты, но не лезут в глубокие потоки движка и часто забрасываются после обновлений игры.
+
+**VoidEngine** - это низкоуровневый инженерный софт на **Rust**, работающий напрямую с памятью и таблицами Unreal Engine 4. Символическая цена (199 ₽ / $3 - дешевле бургера или чашки кофе) обеспечивает три главные вещи:
+
+* **Отполированная стабильность без поломки сохранений:** мы вручную выверяем и заносим в белые списки сотни игровых механик (радар, камеры, физику взрывов, сюжетные события и работу хоста в Multivoid), чтобы вы получали +100% честных FPS без багов и потери лута.
+* **Быстрые обновления и хотфиксы:** с каждым патчем игры внутренняя структура классов меняется. Поддержка проекта позволяет выпускать исправления (`v1.01`, `v1.02`, грядущий `v1.1`) буквально за считанные часы.
+* **Личная техподдержка:** помощь с установкой и быстрый разбор любых редких нюансов даже на 15-летних процессорах или встроенной графике без видеокарты.
+
+---
 
 ### Официальные ссылки:
 * **Скачать мод (РФ и СНГ):** [Boosty](https://boosty.to/yupl0ve)
