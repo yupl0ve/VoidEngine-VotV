@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VoidEngine v1.03 - Native Rust FPS Boost Mod for Voices of the Void</title>
+  <meta name="description" content="2x+ pure native FPS boost for Voices of the Void (0.9+ & Multivoid). Multi-threaded Rust Rayon spatial engine with zero FrameGen input lag and 100% story safety." />
+  <style>
+    :root {
+      --bg: #090a0f; --card: #11131c; --border: #1f2436;
+      --accent: #00f090; --accent-dim: rgba(0, 240, 144, 0.12);
+      --danger: #ff4757; --text: #eef1f8; --muted: #8b93a8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+      background: radial-gradient(circle at 50% 0%, #15192b 0%, var(--bg) 55%);
+      color: var(--text); line-height: 1.6; padding-bottom: 60px;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 12px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.15rem; letter-spacing: 0.6px; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+    .badge { font-size: 0.72rem; padding: 3px 8px; border-radius: 6px; background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,240,144,0.3); font-family: monospace; }
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
+    .lang-btn { background: var(--card); color: var(--text); border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+    .lang-btn:hover { border-color: var(--accent); }
+    .hero { text-align: center; padding: 52px 0 34px; }
+    .hero h1 { font-size: clamp(1.9rem, 5vw, 3.1rem); line-height: 1.15; font-weight: 800; margin-bottom: 16px; background: linear-gradient(90deg, #fff 20%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { color: var(--muted); max-width: 680px; margin: 0 auto 26px; font-size: 1.03rem; }
+    .cta-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-bottom: 16px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; border-radius: 10px; font-weight: 700; font-size: 0.95rem; transition: transform 0.15s; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: var(--accent); color: #06130c; box-shadow: 0 0 24px rgba(0,240,144,0.28); }
+    .btn-ru { background: #f15f2c; color: #fff; box-shadow: 0 0 24px rgba(241,95,44,0.25); }
+    .btn-ghost { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; font-size: 0.85rem; }
+    .sub-note { font-size: 0.82rem; color: var(--muted); }
+    .demo-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin: 20px 0 44px; }
+    .demo-controls { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+    .preset-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .p-tab { background: #07080c; color: var(--muted); border: 1px solid var(--border); padding: 8px 13px; border-radius: 8px; cursor: pointer; font-size: 0.83rem; font-weight: 600; }
+    .p-tab.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .hz-bar { display: flex; align-items: center; gap: 10px; font-family: monospace; font-size: 0.8rem; color: var(--muted); }
+    canvas#fpsCanvas { width: 100%; height: 156px; background: #07080c; border: 1px solid var(--border); border-radius: 12px; display: block; margin-bottom: 14px; }
+    .osd-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; font-family: monospace; }
+    .osd-card { background: #07080c; border: 1px solid var(--border); padding: 12px 16px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    h2 { font-size: 1.5rem; margin-bottom: 16px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 16px; margin-bottom: 44px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+    .card-tag { font-family: monospace; font-size: 0.75rem; color: var(--accent); margin-bottom: 6px; display: block; text-transform: uppercase; }
+    .card h3 { font-size: 1.05rem; margin-bottom: 8px; color: #fff; }
+    .card p { font-size: 0.9rem; color: var(--muted); }
+    .table-wrap { overflow-x: auto; background: var(--card); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 44px; }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem; }
+    th, td { padding: 14px 18px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-size: 0.8rem; text-transform: uppercase; }
+    tr:last-child td { border-bottom: none; }
+    .fps-bad { color: var(--danger); font-family: monospace; font-weight: 700; }
+    .fps-good { color: var(--accent); font-family: monospace; font-weight: 700; }
+    details.faq-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; margin-bottom: 10px; }
+    details.faq-item summary { font-weight: 700; cursor: pointer; color: #fff; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+    details.faq-item summary::after { content: "+"; color: var(--accent); font-size: 1.2rem; font-family: monospace; }
+    details[open].faq-item summary::after { content: "-"; }
+    details.faq-item p { margin-top: 10px; color: var(--muted); font-size: 0.92rem; }
+    footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 44px; padding-top: 24px; border-top: 1px solid var(--border); }
+    [data-lang="ru"] { display: none; }
+    body.ru [data-lang="en"] { display: none; }
+    body.ru [data-lang="ru"] { display: block; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <div class="brand">
+        <span class="dot"></span>
+        <span>VOIDENGINE</span>
+        <span class="badge">v1.03</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn btn-ghost" href="https://github.com/yupl0ve/VoidEngine-VotV/blob/main/README.md" target="_blank">GitHub &amp; VirusTotal</a>
+        <a class="btn btn-ghost" href="https://www.youtube.com/@yupl0ve_meow" target="_blank">YouTube</a>
+        <button class="lang-btn" onclick="toggleLang()">RU / ENG</button>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <h1 data-lang="en">Honest 2x+ Native FPS Boost for Voices of the Void</h1>
+      <h1 data-lang="ru">Честный буст ФПС в 2+ раза для Voices of the Void</h1>
+
+      <p data-lang="en">Low-level Rust (Rayon) spatial optimization engine for cluttered Day 30+ bases, 0.9+ builds, and Multivoid Co-Op. Zero FrameGen input lag, zero deleted items, 100% story &amp; farming safety.</p>
+      <p data-lang="ru">Низкоуровневый оптимизатор на Rust (Rayon) для застроенных баз 30+ дня, версий 0.9+ и коопа Multivoid. Честные нативные кадры без мыла, без инпут-лага и без поломки сюжета, грядок и майнинга.</p>
+
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://hipolink.net/yupl0ve_meow" target="_blank">GLOBAL ($3 - Hipolink)</a>
+        <a class="btn btn-ru" href="https://boosty.to/yupl0ve" target="_blank">RU / CIS (199 RUB - Boosty)</a>
+      </div>
+      <div class="sub-note" data-lang="en">Compatible with VotV 0.9.x / 0.10+  |  Multivoid Co-Op Ready  |  Clean VirusTotal Scan</div>
+      <div class="sub-note" data-lang="ru">Поддержка VotV 0.9.x / 0.10+  |  Полная совместимость с Multivoid  |  Чистый VirusTotal</div>
+    </section>
+
+    <div class="demo-box">
+      <div class="demo-controls">
+        <div class="preset-tabs">
+          <button class="p-tab active" onclick="setScene(0, this)">1. Day 35 Base (95 > 212 FPS)</button>
+          <button class="p-tab" onclick="setScene(1, this)">2. Roach Swarm (80 > 255 FPS)</button>
+          <button class="p-tab" onclick="setScene(2, this)">3. Vega 3 iGPU (14 > 30 FPS)</button>
+        </div>
+        <div class="hz-bar">
+          <span id="hzLabel">Display: ... Hz</span>
+          <button class="p-tab" id="slowBtn" onclick="toggleSlow()">0.5x Slow-Mo: OFF</button>
+        </div>
+      </div>
+      <canvas id="fpsCanvas" width="920" height="156"></canvas>
+      <div class="osd-grid">
+        <div class="osd-card">
+          <span style="color:var(--muted)">Vanilla VotV</span>
+          <strong id="vStat" class="fps-bad">95 FPS (10.5 ms + stutters)</strong>
+        </div>
+        <div class="osd-card">
+          <span style="color:var(--muted)">VoidEngine v1.03</span>
+          <strong id="eStat" class="fps-good">212 FPS (4.7 ms - 2.2x)</strong>
+        </div>
+      </div>
+      <div style="font-size:0.82rem;color:var(--muted);margin-top:10px;" data-lang="en">Real-time frame-rate stepped motion (capped by your monitor refresh rate). Enable "0.5x Slow-Mo" on 60Hz displays to inspect high-FPS frame steps and Vanilla CPU micro-stutters.</div>
+      <div style="font-size:0.82rem;color:var(--muted);margin-top:10px;" data-lang="ru">Честная отрисовка каждого кадра по таймингу (ограничена герцовкой вашего экрана). На мониторах 60 Гц нажмите "0.5x Slow-Mo", чтобы детально разглядеть разницу шага на высоких ФПС и статтеры ваниллы.</div>
+    </div>
+
+    <h2 data-lang="en">Architecture &amp; Core Advantages</h2>
+    <h2 data-lang="ru">Как VoidEngine убирает лаги на базе</h2>
+    <div class="grid">
+      <div class="card">
+        <span class="card-tag">01 / RAYON CORE</span>
+        <h3 data-lang="en">Multi-Threaded Rust Engine</h3>
+        <h3 data-lang="ru">Многопоточное ядро на Rust</h3>
+        <p data-lang="en">Offloads heavy spatial math from UE4's single-threaded GameThread onto all CPU cores via Rayon calculations.</p>
+        <p data-lang="ru">Выносит тяжелые пространственные расчеты из забитого однопоточного GameThread движка UE4 на все ядра процессора через Rayon.</p>
+      </div>
+      <div class="card">
+        <span class="card-tag">02 / SPATIAL CULLING</span>
+        <h3 data-lang="en">Smart Tick &amp; C++ Culling</h3>
+        <h3 data-lang="ru">Умный куллинг тиков</h3>
+        <p data-lang="en">Dynamically throttles thousands of idle props, cables, and distant actors up to 64x without despawning a single item.</p>
+        <p data-lang="ru">Динамически снижает частоту пустых тиков тысяч пропов и кабелей вдали от игрока до 64 раз без удаления предметов.</p>
+      </div>
+      <div class="card">
+        <span class="card-tag">03 / SAFE WHITELIST</span>
+        <h3 data-lang="en">100% Story &amp; Timer Safe (v1.03)</h3>
+        <h3 data-lang="ru">100% защита сюжета и ферм (v1.03)</h3>
+        <p data-lang="en">Ariral events, signals, radar, balcony telescope, farming pots, sprinklers, 3D printers, and crypto miners run at 1:1 vanilla speed.</p>
+        <p data-lang="ru">Ивенты Ариралов, сигналы, радар, телескоп, грядки, полив, принтер и майнинг-фермы работают секунда в секунду с ваниллой.</p>
+      </div>
+    </div>
+    <h2 data-lang="en">Quick Setup in 3 Steps</h2>
+    <h2 data-lang="ru">Быстрая установка за 3 шага</h2>
+    <div class="grid">
+      <div class="card">
+        <span class="card-tag">STEP 1</span>
+        <h3 data-lang="en">Unpack to Game Folder</h3>
+        <h3 data-lang="ru">Распакуй архив в папку игры</h3>
+        <p data-lang="en">Extract VoidEngine alongside UE4SS into your Voices of the Void Win64 binaries folder.</p>
+        <p data-lang="ru">Закинь файлы мода вместе с UE4SS в папку Win64 установленной Voices of the Void.</p>
+      </div>
+      <div class="card">
+        <span class="card-tag">STEP 2</span>
+        <h3 data-lang="en">Activate Permanent Key</h3>
+        <h3 data-lang="ru">Получи вечный ключ</h3>
+        <p data-lang="en">Run the game once to generate my_hwid.txt and send the code in Discord or Boosty/Hipolink DM to get your license.key.</p>
+        <p data-lang="ru">Запусти игру один раз - появится файл my_hwid.txt. Отправь код в Discord или личку Boosty/Hipolink для выдачи license.key.</p>
+      </div>
+      <div class="card">
+        <span class="card-tag">STEP 3</span>
+        <h3 data-lang="en">Press [DELETE] In-Game</h3>
+        <h3 data-lang="ru">Жми [DELETE] прямо в игре</h3>
+        <p data-lang="en">Drop license.key next to the mod, load your Day 30+ save, and customize presets or AI freeze anytime via [DELETE].</p>
+        <p data-lang="ru">Положи license.key в папку мода, загружай свой сейв и управляй пресетами и заморозкой ИИ через меню на [DELETE].</p>
+      </div>
+    </div>
+
+    <h2 data-lang="en">Verified Hardware Benchmarks</h2>
+    <h2 data-lang="ru">Реальные замеры на разном железе</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Hardware (CPU / GPU)</th>
+            <th>Test Scenario</th>
+            <th>Vanilla VotV</th>
+            <th>VoidEngine v1.03</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Ryzen 5 5600 + RTX 4060</td>
+            <td>Cluttered Day 35 Base</td>
+            <td class="fps-bad">95 - 110 FPS</td>
+            <td class="fps-good">212 - 250 FPS (~2.2x)</td>
+          </tr>
+          <tr>
+            <td>Ryzen 5 5600 + RTX 4060</td>
+            <td>Basement Roach / Mannequin Swarm</td>
+            <td class="fps-bad">80 - 130 FPS</td>
+            <td class="fps-good">255 - 290 FPS (AI Freeze)</td>
+          </tr>
+          <tr>
+            <td>Ryzen 5 5600 + RTX 3050 8GB</td>
+            <td>Subscriber Heavy Base</td>
+            <td class="fps-bad">~48 - 65 FPS</td>
+            <td class="fps-good">145 - 200 FPS (2.5x+)</td>
+          </tr>
+          <tr>
+            <td>Athlon 3000G (Vega 3 iGPU, No GPU)</td>
+            <td>Low-End Integrated Graphics</td>
+            <td class="fps-bad">14 FPS (Unplayable)</td>
+            <td class="fps-good">30 FPS (2.1x Playable)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 data-lang="en">Frequently Asked Questions &amp; Security</h2>
+    <h2 data-lang="ru">Частые вопросы и безопасность</h2>
+
+    <details class="faq-item" open>
+      <summary><span data-lang="en">Is VoidEngine safe? Does it connect to the internet?</span><span data-lang="ru">Безопасен ли мод? Лезет ли он в интернет?</span></summary>
+      <p data-lang="en">100% offline. VoidEngine contains zero network sockets or telemetry. Hardware activation uses a local cryptographic Ed25519 signature check (license.key), and full VirusTotal scan links are public on our GitHub.</p>
+      <p data-lang="ru">Мод работает на 100% офлайн - в коде нет сетевых сокетов или телеметрии. Активация проходит локально через криптографическую подпись Ed25519 (файл license.key), а ссылки на чистый скан VirusTotal открыты на GitHub.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary><span data-lang="en">Is it a monthly fee or do I keep the mod forever?</span><span data-lang="ru">Нужно ли платить каждый месяц или мод остается навсегда?</span></summary>
+      <p data-lang="en">Your issued license.key has no expiration timer - your downloaded VoidEngine build works forever on your PC! Active subscription is only needed if you want to download future major updates (like v1.1).</p>
+      <p data-lang="ru">Выданный файл license.key не имеет таймера отключения - скачанная версия мода остается работать на твоем ПК навсегда! Подписка нужна только тогда, когда захочешь забрать новые крупные обновления.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary><span data-lang="en">Will it break story events, signals, farming, or crypto miners?</span><span data-lang="ru">Не сломает ли мод сюжет, сигналы, грядки или майнинг-ферму?</span></summary>
+      <p data-lang="en">No! VoidEngine v1.03 keeps a strict whitelist: Ariral events, map triggers, radar, signal downloading, balcony telescope, growing plants, sprinklers, 3D printers, and crypto miners run at 100% vanilla speed.</p>
+      <p data-lang="ru">Нет! В VoidEngine v1.03 встроен строгий белый список: сюжетные триггеры, ивенты Ариралов, скачивание сигналов, радар, балконный телескоп, рост растений, полив, 3D-принтер и майнинг-стойки работают секунда в секунду с ваниллой.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary><span data-lang="en">How is this different from Lossless Scaling / FrameGen or Upscalers?</span><span data-lang="ru">Чем это лучше Lossless Scaling (FrameGen) или обычных апскейлеров?</span></summary>
+      <p data-lang="en">In VotV, Day 30+ lag is a CPU GameThread bottleneck, not a GPU issue. Lowering resolution does nothing when 3,000 props choke 1 CPU core, and FrameGen adds input lag and UI artifacts. VoidEngine fixes the actual CPU bottleneck for crisp native frames (plus includes optional clean UE4 TAAU in the [DELETE] menu).</p>
+      <p data-lang="ru">На поздних днях VotV упирается в 1 ядро процессора (GameThread) из-за тысяч предметов, а не в видеокарту. Снижение разрешения тут не спасает, а генерация кадров (FrameGen) добавляет кисельный инпут-лаг и артефакты интерфейса. VoidEngine лечит сам упор в процессор, давая честный отклик мыши (плюс в меню на [DELETE] уже встроен чистый пресет UE4 TAAU).</p>
+    </details>
+
+    <details class="faq-item">
+      <summary><span data-lang="en">Does it work in Multivoid Co-Op &amp; across game patches?</span><span data-lang="ru">Работает ли мод в коопе Multivoid и на новых патчах игры?</span></summary>
+      <p data-lang="en">Yes! Both host and clients get massive FPS boosts in Multivoid without desync, and dynamic UE4 reflection allows VoidEngine to work across VotV 0.9.x and 0.10+ builds.</p>
+      <p data-lang="ru">Да! И хост, и подключившиеся друзья получают прирост ФПС в Multivoid без рассинхрона, а динамический поиск классов позволяет моду работать на сборках VotV 0.9.x и 0.10+.</p>
+    </details>
+    <footer>
+      VoidEngine by <strong>@yupl0ve_meow</strong>  |  Not affiliated with EternityDev / Nose  |  <a href="https://github.com/yupl0ve/VoidEngine-VotV/blob/main/README.md" style="color:var(--accent)">GitHub Documentation</a>
+    </footer>
+  </div>
+
+  <script>
+    const scenes = [
+      { vFps: 95,  eFps: 212, stutterMs: 55, vTxt: "95 FPS (10.5 ms + stutters)", eTxt: "212 FPS (4.7 ms - 2.2x)" },
+      { vFps: 80,  eFps: 255, stutterMs: 75, vTxt: "80 FPS (12.5 ms heavy AI lag)", eTxt: "255 FPS (3.9 ms - 3.1x)" },
+      { vFps: 14,  eFps: 30,  stutterMs: 110, vTxt: "14 FPS (71.4 ms slideshow)", eTxt: "30 FPS (33.3 ms - 2.1x)" }
+    ];
+    let cur = scenes[0];
+    let timeScale = 1.0;
+
+    function setScene(idx, btn) {
+      cur = scenes[idx];
+      document.querySelectorAll('.preset-tabs .p-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('vStat').textContent = cur.vTxt;
+      document.getElementById('eStat').textContent = cur.eTxt;
+      vTrail = []; eTrail = [];
+    }
+
+    function toggleSlow() {
+      timeScale = (timeScale === 1.0) ? 0.45 : 1.0;
+      const b = document.getElementById('slowBtn');
+      b.textContent = (timeScale < 1) ? '0.5x Slow-Mo: ON' : '0.5x Slow-Mo: OFF';
+      b.classList.toggle('active', timeScale < 1);
+      vTrail = []; eTrail = [];
+    }
+
+    const cvs = document.getElementById('fpsCanvas');
+    const ctx = cvs.getContext('2d');
+    let xTrue = 50, dir = 1, lastT = performance.now();
+    let xVan = 50, xEng = 50, nextVanT = 0, nextEngT = 0;
+    let vTrail = [], eTrail = [];
+    let hzSamples = [], hzDone = false;
+
+    function loop(now) {
+      const rawDt = now - lastT;
+      lastT = now;
+      if (!hzDone && rawDt > 1 && rawDt < 50) {
+        hzSamples.push(1000 / rawDt);
+        if (hzSamples.length >= 45) {
+          const avg = Math.round(hzSamples.reduce((a,b)=>a+b,0) / hzSamples.length);
+          document.getElementById('hzLabel').textContent = 'Display: ~' + avg + ' Hz';
+          hzDone = true;
+        }
+      }
+
+      xTrue += dir * 380 * (rawDt / 1000) * timeScale;
+      if (xTrue > cvs.width - 50) { xTrue = cvs.width - 50; dir = -1; vTrail = []; eTrail = []; }
+      if (xTrue < 50) { xTrue = 50; dir = 1; vTrail = []; eTrail = []; }
+
+      if (now >= nextVanT) {
+        vTrail.push(xVan); if (vTrail.length > 5) vTrail.shift();
+        xVan = xTrue;
+        const baseStep = (1000 / cur.vFps) / timeScale;
+        const spike = (Math.sin(now * 0.008) > 0.88) ? cur.stutterMs : 0;
+        nextVanT = now + baseStep + spike;
+      }
+
+      if (now >= nextEngT) {
+        eTrail.push(xEng); if (eTrail.length > 5) eTrail.shift();
+        xEng = xTrue;
+        nextEngT = now + ((1000 / cur.eFps) / timeScale);
+      }
+
+      ctx.clearRect(0, 0, cvs.width, cvs.height);
+      ctx.strokeStyle = '#1f2436';
+      ctx.beginPath(); ctx.moveTo(0, 78); ctx.lineTo(cvs.width, 78); ctx.stroke();
+
+      ctx.fillStyle = '#8b93a8'; ctx.font = '12px monospace';
+      ctx.fillText('VANILLA VotV - ' + cur.vFps + ' FPS + CPU Tick Spikes', 16, 22);
+      ctx.fillText('VOIDENGINE v1.03 - ' + cur.eFps + ' FPS Native Pacing', 16, 100);
+
+      vTrail.forEach((tx, i) => {
+        ctx.fillStyle = 'rgba(255,71,87,' + ((i + 1) * 0.06) + ')';
+        ctx.beginPath(); ctx.roundRect(tx - 17, 34, 34, 28, 6); ctx.fill();
+      });
+      ctx.fillStyle = '#ff4757';
+      ctx.beginPath(); ctx.roundRect(xVan - 17, 34, 34, 28, 6); ctx.fill();
+
+      eTrail.forEach((tx, i) => {
+        ctx.fillStyle = 'rgba(0,240,144,' + ((i + 1) * 0.06) + ')';
+        ctx.beginPath(); ctx.roundRect(tx - 17, 112, 34, 28, 6); ctx.fill();
+      });
+      ctx.shadowColor = 'rgba(0,240,144,0.45)'; ctx.shadowBlur = 12;
+      ctx.fillStyle = '#00f090';
+      ctx.beginPath(); ctx.roundRect(xEng - 17, 112, 34, 28, 6); ctx.fill();
+      ctx.shadowBlur = 0;
+
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    function toggleLang() { document.body.classList.toggle('ru'); }
+    if ((navigator.language || '').toLowerCase().startsWith('ru')) {
+      document.body.classList.add('ru');
+    }
+  </script>
+</body>
+</html>
