@@ -4,7 +4,7 @@
 - **Fixed:** Balcony telescope (`SceneCapture` sky lens now renders properly at all times without sacrificing base FPS).
 - **Added (Farming & Irrigation):** Whitelisted `farmPot`, `growingPlant`, `sprinkler`, `faucet`, and `beehive` so crops and mushrooms grow at full 1:1 vanilla speed while away from the base.
 - **Added (Base Equipment):** Whitelisted crypto mining rigs (`miner`), 3D printers, battery chargers, Roombas, delivery drones, and kitchen appliances (`oven`, `microwave`, `cookingPad`, `coffeeMaker`, buckets, woodchipper) to prevent background timer slowdown.
-- **Added (Story & Events):** Global protection for all `trigger` actors and `event` spawners (including rare Ariral events and wall graffiti) to ensure 100% vanilla story progression.
+- **Added (Story & Events):** Global protection for all `trigger` actors and `event` spawners to ensure 100% vanilla story progression.
 
 ## [v1.02]
 - **[Game Breaking] Bugfix:** Signals now download and process at 100% normal speed without any issues.
